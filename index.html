@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width"/>
+<script src="js/jq.js"></script>
+<script src="js/kinetic.min.js"></script>
+<script src="js/partoedi.js"></script>
+</head>
+<body>
+  <div id="container">
+  </div>
+</body>
+<script type="text/javascript">
+	$(function() {
+		var disk = new Kinetic.Stage({
+		  container: 'container',
+		  width: 700,
+		  height: 110
+		});
+
+		var data = {
+		  "path":"/dev/sda",
+		  "size":250059350016,
+		  "model":"ATA WDC WD2500BEVS-0",
+		  "label":"msdos",
+			"partitions": [
+		        {"id":-1,"parent":-1,"start":32256,"end":1048064,"size":1016320,"type":"DEVICE_PARTITION_TYPE_FREESPACE","filesystem":"","description":""},
+		        {"id":1,"parent":-1,"start":1048576,"end":44757417472,"size":44756369408,"type":"DEVICE_PARTITION_TYPE_NORMAL","filesystem":"ext4","description":""},
+		        {"id":-1,"parent":-1,"start":44757417984,"end":44758465024,"size":1047552,"type":"DEVICE_PARTITION_TYPE_FREESPACE","filesystem":"","description":""},
+		        {"id":2,"parent":-1,"start":44758465536,"end":250058112512,"size":205299647488,"type":"DEVICE_PARTITION_TYPE_EXTENDED","filesystem":"","description":""},
+		        {"id":-1,"parent":-1,"start":44758465536,"end":44758465536,"size":512,"type":"DEVICE_PARTITION_TYPE_FREESPACE","filesystem":"","description":""},
+		        {"id":-1,"parent":-1,"start":44758466048,"end":44758466048,"size":512,"type":"DEVICE_PARTITION_TYPE_FREESPACE","filesystem":"","description":""},
+		        {"id":8,"parent":-1,"start":44758466560,"end":50000297472,"size":5241831424,"type":"DEVICE_PARTITION_TYPE_LOGICAL","filesystem":"ext4","description":""},
+		        {"id":-1,"parent":-1,"start":50000297984,"end":50001346048,"size":1048576,"type":"DEVICE_PARTITION_TYPE_FREESPACE","filesystem":"","description":""},
+		        {"id":5,"parent":-1,"start":50001346560,"end":200000142848,"size":149998796800,"type":"DEVICE_PARTITION_TYPE_LOGICAL","filesystem":"ext4","description":""},
+		        {"id":-1,"parent":-1,"start":200000143360,"end":200001191424,"size":1048576,"type":"DEVICE_PARTITION_TYPE_FREESPACE","filesystem":"","description":""},
+		        {"id":6,"parent":-1,"start":200001191936,"end":201000484352,"size":999292928,"type":"DEVICE_PARTITION_TYPE_LOGICAL","filesystem":"linux-swap(v1)","description":""},
+		        {"id":-1,"parent":-1,"start":201000484864,"end":201001166848,"size":682496,"type":"DEVICE_PARTITION_TYPE_FREESPACE","filesystem":"","description":""},
+		        {"id":-1,"parent":-1,"start":201001167360,"end":201001532928,"size":366080,"type":"DEVICE_PARTITION_TYPE_FREESPACE","filesystem":"","description":""},
+		        {"id":7,"parent":-1,"start":201001533440,"end":250058112512,"size":49056579584,"type":"DEVICE_PARTITION_TYPE_LOGICAL","filesystem":"ext4","description":""},
+		        {"id":-1,"parent":-1,"start":250058113024,"end":250059349504,"size":1236992,"type":"DEVICE_PARTITION_TYPE_METADATA","filesystem":"","description":""}]
+		};
+
+		var device = new Partoedi.createDisk(data);
+		disk.add(device);
+	});
+</script>
+</html>
