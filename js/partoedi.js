@@ -56,8 +56,15 @@ var Partoedi = function() {
                     var sizePercen = ((p.size / gbSize).toFixed(2) / diskSize) * 100;
                     var sizeWidth = (sizePercen * 600) / 100;
 
+                    var group = new Kinetic.Group({
+                      x: lastX,
+                      y: 0,
+                      draggable: true,
+                      dragConstraint: 'horizontal'
+                    });
+
                     var rect = new Kinetic.Rect({
-                        name: device.path + p.id,
+                        name: "rect",
                         x: lastX,
                         y: 0,
                         width: sizeWidth,
@@ -74,26 +81,19 @@ var Partoedi = function() {
                             _clearSelected(diskLayer);
                             this.setStroke('gray');
                             this.getLayer().draw();
-                        });                               
+                        });
+
+                        /*rect.on('mouseover', function() {
+                          this.setWidth(this.getWidth() - 5);
+                          this.getLayer().draw();
+                        });*/                               
                     }
 
-                    //var options = {
-                    //    name: device.path + p.id,
-                    //    x: lastX,
-                    //    y: 0,
-                    //    width: sizeWidth,
-                    //    height: 100,
-                    //    fill: 'blue',
-                    //    stroke: 'gray',
-                    //    strokeWidth: 2,
-                    //    cornerRadius: 5,
-                    //    lineJoin : "round"
-                    //};
-                    //
-                    //_createPartition(options, diskLayer, tooltipLayer);
+                    group.add(rect);
+                    addAnchor(group, lastX, 25, "resize");
                     
                     lastX = lastX + sizeWidth;
-                    diskLayer.add(rect);
+                    diskLayer.add(group);
                     console.log("PRIMARY");
                 } else if (p.type.indexOf("EXTENDED") > 0) {
                     var sizePercen = ((p.size / gbSize).toFixed(2) / diskSize) * 100;
@@ -149,6 +149,11 @@ var Partoedi = function() {
                                 this.setStroke('gray');
                                 this.getLayer().draw();
                             });
+
+                          rect.on('mouseover', function() {
+                            this.setWidth(this.getWidth() - 5);
+                            this.getLayer().draw();
+                          });
                         }
                         
                         lastX = lastX + sizeWidth;
@@ -180,6 +185,11 @@ var Partoedi = function() {
                             this.setStroke('gray');
                             this.getLayer().draw();
                         });
+
+                        rect.on('mouseover', function() {
+                          this.setWidth(this.getWidth() - 5);
+                          this.getLayer().draw();
+                        });
                     }
                     
                     lastX = lastX + sizeWidth;
@@ -207,6 +217,11 @@ var Partoedi = function() {
                             this.setStroke('gray');
                             this.getLayer().draw();
                         });
+
+                        rect.on('mouseover', function() {
+                          this.setWidth(this.getWidth() - 5);
+                          this.getLayer().draw();
+                        });
                     }
                     
                     lastX = lastX + sizeWidth;
@@ -218,6 +233,94 @@ var Partoedi = function() {
         }
 
         return diskLayer;
+    }
+
+    var update = function(group, activeAnchor) {
+        /*var topLeft = group.get(".topLeft")[0];
+        var topRight = group.get(".topRight")[0];
+        var bottomRight = group.get(".bottomRight")[0];
+        var bottomLeft = group.get(".bottomLeft")[0];
+        var image = group.get(".image")[0];*/
+        var resize = group.get(".resize")[0];
+        var rect = group.get(".rect")[0];
+
+        // update anchor positions
+        /*switch (activeAnchor.getName()) {
+          case "topLeft":
+            topRight.attrs.y = activeAnchor.attrs.y;
+            bottomLeft.attrs.x = activeAnchor.attrs.x;
+            break;
+          case "topRight":
+            topLeft.attrs.y = activeAnchor.attrs.y;
+            bottomRight.attrs.x = activeAnchor.attrs.x;
+            break;
+          case "bottomRight":
+            bottomLeft.attrs.y = activeAnchor.attrs.y;
+            topRight.attrs.x = activeAnchor.attrs.x;
+            break;
+          case "bottomLeft":
+            bottomRight.attrs.y = activeAnchor.attrs.y;
+            topLeft.attrs.x = activeAnchor.attrs.x;
+            break;
+        }*/
+
+        resize.attrs.y = activeAnchor.attrs.y;
+        resize.attrs.x = activeAnchor.attrs.x;
+
+        /*image.setPosition(topLeft.attrs.x, topLeft.attrs.y);*/
+
+        /*var width = topRight.attrs.x - topLeft.attrs.x;
+        var height = bottomLeft.attrs.y - topLeft.attrs.y;*/
+
+        var width = resize.attrs.x - rect.attrs.x;
+        var height = resize.attrs.y - rect.attrs.y;
+        if(width && height) {
+          image.setSize(width, height);
+        }
+      }
+      
+      var addAnchor = function(group, x, y, name) {
+        var stage = group.getStage();
+        var layer = group.getLayer();
+
+        var anchor = new Kinetic.Circle({
+          x: x,
+          y: y,
+          stroke: "#666",
+          fill: "#ddd",
+          strokeWidth: 2,
+          radius: 8,
+          name: name,
+          draggable: true
+        });
+
+        anchor.on("dragmove", function() {
+          update(group, this);
+          layer.draw();
+        });
+        anchor.on("mousedown touchstart", function() {
+          group.setDraggable(false);
+          this.moveToTop();
+        });
+        anchor.on("dragend", function() {
+          group.setDraggable(true);
+          layer.draw();
+        });
+        // add hover styling
+        anchor.on("mouseover", function() {
+          var layer = this.getLayer();
+          document.body.style.cursor = "pointer";
+          this.setStrokeWidth(4);
+          layer.draw();
+        });
+        anchor.on("mouseout", function() {
+          var layer = this.getLayer();
+          document.body.style.cursor = "default";
+          this.setStrokeWidth(2);
+          layer.draw();
+        });
+
+        group.add(anchor);
     }
 
     var _clearSelected = function(deviceLayer) {
